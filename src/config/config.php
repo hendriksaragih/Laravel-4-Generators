@@ -16,6 +16,8 @@ return [
 
     'scaffold_controller_template_path' => 'vendor/way/generators/src/Way/Generators/templates/scaffolding/controller.txt',
 
+    'scaffold_view_template_path' => 'vendor/way/generators/src/Way/Generators/templates/scaffolding/view',
+
     'migration_template_path' => 'vendor/way/generators/src/Way/Generators/templates/migration.txt',
 
     'seed_template_path' => 'vendor/way/generators/src/Way/Generators/templates/seed.txt',

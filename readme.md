@@ -14,8 +14,6 @@ This Laravel 4 package provides a variety of generators to speed up your develop
 
 ## Installation
 
-> [Want a 5-minute video overview?](https://dl.dropboxusercontent.com/u/774859/Work/Laravel-4-Generators/Get-Started-With-Laravel-Custom-Generators.mp4)
-
 Begin by installing this package through Composer. Edit your project's `composer.json` file to require `way/generators`.
 
 	"require-dev": {
@@ -470,50 +468,43 @@ This will copy all templates to your `app/templates` directory. You can modify t
 php artisan generate:publish-templates --path=app/foo/bar/templates
 ```
 
-When you run the `generate:publish-templates` command, it will also publish
-the configuration to `app/config/packages/way/generators/config/config.php`. This file will look somewhat like:
+Once finished, you'll need to tell the generators where your new templates are located. When you run the `generate:publish-templates` command, it will also publish
+the configuration to `app/config/packages/way/generators/config/config.php`. This file will look like:
 
 ```php
 <?php
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Where the templates for the generators are stored...
-    |--------------------------------------------------------------------------
-    |
-    */
-    'model_template_path' => '/Users/jeffreyway/Desktop/generators-testing/app/templates/model.txt',
+    /**
+     * Where is the template for a model?
+     */
+    'model_template_path' => 'app/templates/model.txt',
 
-    'scaffold_model_template_path' => '/Users/jeffreyway/Desktop/generators-testing/app/templates/scaffolding/model.txt',
-
-    'controller_template_path' => '/Users/jeffreyway/Desktop/generators-testing/app/templates/controller.txt',
-
-    'scaffold_controller_template_path' => '/Users/jeffreyway/Desktop/generators-testing/app/templates/scaffolding/controller.txt',
-
-    'migration_template_path' => '/Users/jeffreyway/Desktop/generators-testing/app/templates/migration.txt',
-
-    'seed_template_path' => '/Users/jeffreyway/Desktop/generators-testing/app/templates/seed.txt',
-
-    'view_template_path' => '/Users/jeffreyway/Desktop/generators-testing/app/templates/view.txt',
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Where the generated files will be saved...
-    |--------------------------------------------------------------------------
-    |
-    */
+    /**
+     * Where do you put your models?
+     */
     'model_target_path'   => app_path('models'),
 
-    'controller_target_path'   => app_path('controllers'),
+    /**
+     * Where is the template for a migration?
+     */
+    'migration_template_path' => 'app/templates/templates/migration.txt',
 
+    /**
+     * Where do you put your migrations?
+     */
     'migration_target_path'   => app_path('database/migrations'),
 
-    'seed_target_path'   => app_path('database/seeds'),
+    /**
+     * Where is the template for a database seeder?
+     */
+    'seed_template_path' => 'app/templates/templates/seed.txt',
 
-    'view_target_path'   => app_path('views')
+    /**
+     * Where do you put your database table seeders?
+     */
+    'seed_target_path'   => app_path('database/seeds')
 
 ];
 ```
