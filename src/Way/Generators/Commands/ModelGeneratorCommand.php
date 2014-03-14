@@ -2,6 +2,7 @@
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use Way\Generators\Parsers\MigrationFieldsParser;
 
 class ModelGeneratorCommand extends GeneratorCommand {
 
@@ -38,9 +39,20 @@ class ModelGeneratorCommand extends GeneratorCommand {
      */
     protected function getTemplateData()
     {
-        return [
-            'NAME' => ucwords($this->argument('modelName'))
-        ];
+        $parser = new MigrationFieldsParser();
+        $fields = $parser->parse($this->option('fields'));
+        $field = $this->parseFields($fields);
+        $name = ucwords($this->argument('modelName'));
+        return compact('name', 'field');
+        
+    }
+    
+    protected function parseFields($fields){
+        $field = array();
+        foreach ($fields as $key => $value) {
+            $field[] = "'$key'";
+        }
+        return implode(', ', $field);
     }
 
     /**
@@ -62,6 +74,16 @@ class ModelGeneratorCommand extends GeneratorCommand {
     {
         return [
             ['modelName', InputArgument::REQUIRED, 'The name of the desired Eloquent model']
+        ];
+    }
+    
+    
+    protected function getOptions()
+    {
+        return [
+            ['fields', null, InputOption::VALUE_OPTIONAL, 'Fields for the migration'],
+            ['path', null, InputOption::VALUE_OPTIONAL, 'Where should the file be created?', app_path('models')],
+            ['templatePath', null, InputOption::VALUE_OPTIONAL, 'The location of the template for this generator']
         ];
     }
 

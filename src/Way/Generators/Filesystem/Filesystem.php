@@ -1,5 +1,7 @@
 <?php namespace Way\Generators\Filesystem;
 
+use File;
+
 class Filesystem {
 
     /**
@@ -18,6 +20,15 @@ class Filesystem {
         }
 
         return file_put_contents($file, $content);
+    }
+    
+    public function make_or_update($file, $content)
+    {
+        if ( !$this->exists($file)){
+            return file_put_contents($file, $content);
+        }else{
+            return File::put($file, $content);
+        }
     }
 
     /**

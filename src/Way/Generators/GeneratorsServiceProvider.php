@@ -9,7 +9,7 @@ use Way\Generators\Commands\PublishTemplatesCommand;
 use Way\Generators\Commands\ScaffoldGeneratorCommand;
 use Way\Generators\Commands\ScaffoldCustomGeneratorCommand;
 use Way\Generators\Commands\ViewGeneratorCommand;
-use Way\Generators\Commands\ViewCustomGeneratorCommand;
+use Way\Generators\Commands\RoutesGeneratorCommand;
 
 class GeneratorsServiceProvider extends ServiceProvider {
 
@@ -26,7 +26,7 @@ class GeneratorsServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
-        $this->package('way/generators');
+        $this->package('hendriksaragih/generators');
     }
 
 	/**
@@ -39,13 +39,12 @@ class GeneratorsServiceProvider extends ServiceProvider {
         foreach([
             'Model',
             'View',
-            'ViewCustom',
             'Controller',
             'Migration',
             'Seeder',
             'Resource',
             'Scaffold',
-            'ScaffoldCustom',
+            'Routes',
             'Publisher'] as $command)
         {
             $this->{"register$command"}();
@@ -80,21 +79,6 @@ class GeneratorsServiceProvider extends ServiceProvider {
         });
 
         $this->commands('generate.view');
-    }
-
-    /**
-     * Register the view custom generator
-     */
-    protected function registerViewCustom()
-    {
-        $this->app['generate.view_custom'] = $this->app->share(function($app)
-        {
-            $generator = $this->app->make('Way\Generators\Generator');
-
-            return new ViewCustomGeneratorCommand($generator);
-        });
-
-        $this->commands('generate.view_custom');
     }
 
     /**
@@ -180,23 +164,17 @@ class GeneratorsServiceProvider extends ServiceProvider {
 
         $this->commands('generate.scaffold');
     }
-
-    /**
-     * register scaffold custom command
-     */
-    public function registerScaffoldCustom()
-    {
-        $this->app['generate.scaffold_custom'] = $this->app->share(function($app)
+    
+    public function registerRoutes(){
+        $this->app['generate.routes'] = $this->app->share(function($app)
         {
-            return new ScaffoldCustomGeneratorCommand;
+            $generator = $this->app->make('Way\Generators\Generator');
+            return new RoutesGeneratorCommand($generator);
         });
-
-        $this->commands('generate.scaffold_custom');
+        $this->commands('generate.routes');
     }
 
-
-
-	/**
+    /**
 	 * Get the services provided by the provider.
 	 *
 	 * @return array

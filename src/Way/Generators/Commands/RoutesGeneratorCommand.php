@@ -4,22 +4,20 @@ use Illuminate\Support\Facades\File;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-class ViewCustomGeneratorCommand extends ViewGeneratorCommand {
-
+class RoutesGeneratorCommand extends GeneratorCommand {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'generate:view_custom';
+    protected $name = 'generate:routes';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Generate a view custom';
-
+    protected $description = 'Generate a custom routes';
     /**
      * Create directory tree for views,
      * and fire generator
@@ -27,13 +25,15 @@ class ViewCustomGeneratorCommand extends ViewGeneratorCommand {
     public function fire()
     {
         $directoryPath = dirname($this->getFileGenerationPath());
-
         if ( ! File::exists($directoryPath))
         {
             File::makeDirectory($directoryPath, 0777, true);
         }
-
-        parent::fire();
+        $this->generator->make_or_update(
+            $this->getTemplatePath(),
+            $this->getTemplateData(),
+            $this->getFileGenerationPath()
+        );
     }
 
     /**
@@ -43,10 +43,8 @@ class ViewCustomGeneratorCommand extends ViewGeneratorCommand {
      */
     protected function getFileGenerationPath()
     {
-        $path = $this->getPathByOptionOrConfig('path', 'view_target_path');
-        $viewName = str_replace('.', '/', $this->argument('viewName'));
-
-        return sprintf('%s/%s.blade.php', $path, $viewName);
+        $path = $this->getPathByOptionOrConfig('path', 'routes_target_path');
+        return sprintf('%s/routes.php', $path);
     }
 
     /**
@@ -56,14 +54,20 @@ class ViewCustomGeneratorCommand extends ViewGeneratorCommand {
      */
     protected function getTemplateData()
     {
-        $arr_action = explode('.', $this->argument('viewName'));
-        $name = ucwords($arr_action[0]);
-        $collection = strtolower($name);
-        $resource = str_singular($collection);
-        $model = ucwords($resource);
-
-        return compact('name', 'collection', 'resource', 'model');
+        $tag = '<?php'.PHP_EOL.PHP_EOL;
+        $file = $this->getFileGenerationPath();
+        $contents = '';
+        list($table, $controler) = explode('.', $this->argument('routesName'));
+        $string = "Route::resource('{$table}', '{$controler}');";
+        if (File::isFile($file)){
+            $contents = str_replace($tag, '', File::get($file));
+        }
+        
+        $routes = $tag.$contents.PHP_EOL.$string;
+        
+        return compact('routes');
     }
+    
 
     /**
      * Get path to the template for the generator
@@ -72,19 +76,13 @@ class ViewCustomGeneratorCommand extends ViewGeneratorCommand {
      */
     protected function getTemplatePath()
     {
-        $arr_action = explode('.', $this->argument('viewName'));
-        return $this->getPathByOptionOrConfig('templatePath', 'scaffold_view_template_path').'/'.end($arr_action).'.txt';
+        return $this->getPathByOptionOrConfig('templatePath', 'view_routes_path');
     }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
+    
     protected function getArguments()
     {
         return [
-            ['viewName', InputArgument::REQUIRED, 'The name of the desired view']
+            ['routesName', InputArgument::REQUIRED, 'The name of the desired routes']
         ];
     }
 

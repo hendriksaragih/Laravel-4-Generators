@@ -3,6 +3,7 @@
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use Way\Generators\Commands\RoutesGeneratorCommand;
 
 class ResourceGeneratorCommand extends Command {
 
@@ -35,16 +36,24 @@ class ResourceGeneratorCommand extends Command {
         $this->callMigration($resource);
         $this->callSeeder($resource);
         $this->callMigrate();
-
-        // All done!
-        $this->info(sprintf(
-            "All done! Don't forget to add '%s` to %s." . PHP_EOL,
-            "Route::resource('{$this->getTableName($resource)}', '{$this->getControllerName($resource)}');",
-            "app/routes.php"
-        ));
+        $this->callAddRoutes($resource);        
 
     }
-
+    
+    protected function callAddRoutes($resource){
+       $routesName = "{$this->getTableName($resource)}.{$this->getControllerName($resource)}";
+       if ($this->confirm("Do you want me to add Routes $routesName? [yes|no]")){            
+            $this->call('generate:routes', compact('routesName'));
+            $this->info(sprintf("All done!" . PHP_EOL));
+        }else{
+            $this->info(sprintf(
+                "All done! Don't forget to add '%s` to %s." . PHP_EOL,
+                "Route::resource('{$this->getTableName($resource)}', '{$this->getControllerName($resource)}');",
+                "app/routes.php"
+            ));
+        }               
+    }
+        
     /**
      * Get the name for the model
      *

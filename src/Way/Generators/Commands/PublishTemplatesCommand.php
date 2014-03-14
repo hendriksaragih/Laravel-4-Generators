@@ -27,10 +27,9 @@ class PublishTemplatesCommand extends Command {
     public function fire()
     {
         $this->copyTemplatesDirectoryForEditing();
-
         // We also will publish the configuration
-        $this->call('config:publish', ['package' => 'way/generators']);
-
+        $this->call('config:publish', ['package' => 'hendriksaragih/generators']);
+        
         $this->pointConfigFileTemplatesToNewLocation();
 
         $this->info(
@@ -60,8 +59,8 @@ class PublishTemplatesCommand extends Command {
      */
     protected function pointConfigFileTemplatesToNewLocation()
     {
-        $configPath = app_path('config/packages/way/generators/config.php');
-        $updated = str_replace('vendor/way/generators/src/Way/Generators/templates', $this->option('path'), File::get($configPath));
+        $configPath = app_path('config/packages/hendriksaragih/generators/config.php');
+        $updated = str_replace('vendor/hendriksaragih/generators/src/Way/Generators/templates', $this->option('path'), File::get($configPath));
 
         File::put($configPath, $updated);
     }
