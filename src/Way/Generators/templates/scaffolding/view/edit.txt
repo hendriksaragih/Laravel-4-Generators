@@ -1,0 +1,19 @@
+@section('title')
+.: Edit $NAME$ :.
+@stop
+
+@section('content')
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="page-title">Edit $NAME$</h2>
+        <section class="widget">
+            <div class="body">
+                {{ Form::model($data, array('route' => array('$COLLECTION$.update', $data->id), 'method' => 'PUT', 'class'=>'form-horizontal')) }}
+                    @include('$COLLECTION$._form')
+                {{ Form::close() }}
+            </div>
+        </section>
+    </div>
+</div>
+
+@stop

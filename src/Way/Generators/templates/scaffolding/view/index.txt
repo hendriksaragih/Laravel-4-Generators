@@ -1,0 +1,49 @@
+@section('title')
+.: $NAME$ :.
+@stop
+
+@section('content')
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="page-title">$NAME$</h2>
+    </div>
+    <div class="col-md-6 text-align-right">
+        <a href="{{route('$COLLECTION$.create')}}" class="btn btn-danger"><i class="fa fa-plus"></i> Tambah</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <section class="widget">
+            <div class="body">
+                {{ $lists->links() }}
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            $HEADERS$
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if ($lists->count() > 0)
+                        @foreach ($lists as $data)
+                        <tr>
+                            $BODY$
+                            <td>
+                                {{ Helper::button_edit(route('$COLLECTION$.edit', $data->id)) }}
+                                {{ Helper::button_delete(route('$COLLECTION$.destroy', $data->id)) }}
+                            </td>
+                        </tr>
+                        @endforeach
+                        @else
+                        <tr>
+                            <td colspan="$COLSPAN$" class="text-center">Tidak ada data</td>
+                        </tr>
+                        @endif
+                    </tbody>
+                </table>
+                {{ $lists->links() }}
+            </div>
+        </section>
+    </div>
+</div>
+
+@stop

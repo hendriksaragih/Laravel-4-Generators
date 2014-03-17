@@ -77,7 +77,7 @@ class ViewGeneratorCommand extends GeneratorCommand {
             $field[] = '{{ Helper::'.$this->parse_helper_field($value['type']).'(\''.$key.'\', $errors)}}';
         }
         $headers[] = "<th class=\"action2\">#</th>";
-        $colspan = count($fields) + 1;
+        $colspan = count($fields) + 2;
         $tab = "\t\t\t\t\t\t\t";
         return array(implode(PHP_EOL.$tab, $headers), implode(PHP_EOL.$tab, $body), implode(PHP_EOL, $field), $colspan);
     }

@@ -9,9 +9,8 @@ class $NAME$ extends \BaseController {
 	 */
 	public function index()
 	{
-	    $$COLLECTION$ = $MODEL$::all();
-
-	    return View::make('$COLLECTION$.index', compact('$COLLECTION$'));
+	    $lists = $MODEL$::paginate();
+        $this->layout->content = View::make('$COLLECTION$.index', compact('lists'));
 	}
 
 	/**
@@ -21,7 +20,7 @@ class $NAME$ extends \BaseController {
 	 */
 	public function create()
 	{
-        return View::make('$COLLECTION$.create');
+        $this->layout->content = View::make('$COLLECTION$.create');
 	}
 
 	/**
@@ -35,12 +34,12 @@ class $NAME$ extends \BaseController {
 
 	    if ($validator->fails())
 	    {
-	        return Redirect::back()->withErrors($validator)->withInput();
+	        return Redirect::to('$COLLECTION$/create')->withErrors($validator);
 	    }
 
 	    $MODEL$::create($data);
 
-	    return Redirect::route('$COLLECTION$.index');
+        return Redirect::to('$COLLECTION$')->with('success', 'Data berhasil disimpan');
 	}
 
 	/**
@@ -64,9 +63,8 @@ class $NAME$ extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		$$RESOURCE$ = $MODEL$::find($id);
-
-		return View::make('$COLLECTION$.edit', compact('$RESOURCE$'));
+		$data = $MODEL$::find($id);
+        $this->layout->content = View::make('$COLLECTION$.edit', compact('data'));
 	}
 
 	/**
@@ -83,12 +81,12 @@ class $NAME$ extends \BaseController {
 
         if ($validator->fails())
         {
-            return Redirect::back()->withErrors($validator)->withInput();
+            return Redirect::to("$COLLECTION$/$id/edit")->withErrors($validator);
         }
 
 		$$RESOURCE$->update($data);
 
-		return Redirect::route('$COLLECTION$.index');
+        return Redirect::to('$COLLECTION$')->with('success', 'Data berhasil disimpan');
 	}
 
 	/**
@@ -101,7 +99,7 @@ class $NAME$ extends \BaseController {
 	{
 		$MODEL$::destroy($id);
 
-		return Redirect::route('$COLLECTION$.index');
+		return Redirect::to('$COLLECTION$')->with('success', 'Data berhasil dihapus');
 	}
 
 }
