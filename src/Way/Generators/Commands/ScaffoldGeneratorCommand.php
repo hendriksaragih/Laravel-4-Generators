@@ -33,7 +33,7 @@ class ScaffoldGeneratorCommand extends ResourceGeneratorCommand {
         $name = $this->getTableName($this->argument('resource'));
         $show_name = ucwords(str_replace('_', ' ', snake_case($name)));
         $obj = new stdClass();
-        $obj->privileges = array('create', 'index', 'edit', 'store', 'show', 'edit', 'update', 'destroy'); 
+        $obj->privileges = array('create', 'index', 'edit', 'store', 'show', 'update', 'destroy'); 
         $obj->name = $show_name;
         $obj->icon = 'fa-bars';
         DB::insert('insert into modules (kode, body) values (?, ?)', array($name, json_encode($obj)));
