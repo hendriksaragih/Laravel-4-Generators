@@ -25,8 +25,19 @@ class ScaffoldGeneratorCommand extends ResourceGeneratorCommand {
     
     
     public function fire(){
-        parent::fire();        
-        $this->insert_modules();
+        parent::fire();  
+        $resource = $this->argument('resource');
+        $this->migration_modules($resource);
+        $this->call('migrate');
+    }
+    
+    protected function migration_modules($resource){
+        $migrationName = $this->getMigrationName($resource);
+        $name = $this->getTableName($resource);
+        $this->call('generate:migration', [
+            'migrationName' => $migrationName.date('Ymdhis'),
+            '--fromScaffold' => $name
+        ]);
     }
     
     protected function insert_modules(){

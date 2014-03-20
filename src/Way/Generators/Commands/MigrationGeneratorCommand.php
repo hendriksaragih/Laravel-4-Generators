@@ -7,6 +7,8 @@ use Way\Generators\Parsers\MigrationFieldsParser;
 use Way\Generators\Generator;
 use Way\Generators\SchemaCreator;
 use Config;
+use stdClass;
+use Illuminate\Support\Facades\DB;
 
 class MigrationGeneratorCommand extends GeneratorCommand {
 
@@ -106,18 +108,36 @@ class MigrationGeneratorCommand extends GeneratorCommand {
     protected function getTemplateData()
     {
         $migrationName = $this->argument('migrationName');
+        $class = ucwords(camel_case($migrationName));
+        
+        if ( ! $name = $this->option('fromScaffold')){            
 
-        // This will tell us the table name and action that we'll be performing
-        $migrationData = $this->migrationNameParser->parse($migrationName);
+            // This will tell us the table name and action that we'll be performing
+            $migrationData = $this->migrationNameParser->parse($migrationName);
 
-        // We also need to parse the migration fields, if provided
-        $fields = $this->migrationFieldsParser->parse($this->option('fields'));
-
-        return [
-            'CLASS' => ucwords(camel_case($migrationName)),
-            'UP'    => $this->schemaCreator->up($migrationData, $fields),
-            'DOWN'  => $this->schemaCreator->down($migrationData, $fields)
-        ];
+            // We also need to parse the migration fields, if provided
+            $fields = $this->migrationFieldsParser->parse($this->option('fields'));
+            
+            $up = $this->schemaCreator->up($migrationData, $fields);
+            $down = $this->schemaCreator->down($migrationData, $fields);
+        }else{
+            $show_name = ucwords(str_replace('_', ' ', snake_case($name)));
+            $obj = new stdClass();
+            $obj->privileges = array('create', 'index', 'edit', 'store', 'show', 'update', 'destroy'); 
+            $obj->name = $show_name;
+            $obj->icon = 'fa-bars';
+            
+            $menus = DB::table('settings')->where('id', '=', 1)->first();
+            $new_body = substr($menus->body, 0, -3).',{"title":"'.$show_name.'","routes":"'.$name.'"}]}]';
+            
+            $up = '
+            DB::table(\'modules\')->insert(array(\'kode\'=> \''.$name.'\', \'body\'=> \''.json_encode($obj).'\'));'.PHP_EOL.'
+            DB::table(\'settings\')->where(\'id\', \'=\', 1)->update(array(\'body\' => \''.$new_body.'\'));';
+            
+            $down = 'DB::table(\'modules\')->where(\'kode\', \'=\', \''.$name.'\')->delete();';
+        }
+        
+        return compact('class', 'up', 'down');        
     }
 
     /**
@@ -153,6 +173,7 @@ class MigrationGeneratorCommand extends GeneratorCommand {
             ['fields', null, InputOption::VALUE_OPTIONAL, 'Fields for the migration'],
             ['path', null, InputOption::VALUE_OPTIONAL, 'Where should the file be created?', app_path('database/migrations')],
             ['templatePath', null, InputOption::VALUE_OPTIONAL, 'The location of the template for this generator'],
+            ['fromScaffold', null, InputOption::VALUE_OPTIONAL, 'For migrate modules.'],
             ['testing', null, InputOption::VALUE_OPTIONAL, 'For internal use only.']
         );
     }

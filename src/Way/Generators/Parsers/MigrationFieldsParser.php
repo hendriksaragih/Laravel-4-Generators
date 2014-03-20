@@ -12,14 +12,14 @@ class MigrationFieldsParser {
     public function parse($fields)
     {
         if ( ! $fields) return [];
-
         // name:string, age:integer
         // name:string(10,2), age:integer
-        $fields = preg_split('/\s?,\s/', $fields);
+        $fields = preg_split('/\s?,/', str_replace(' ', '', $fields));
         $parsed = [];
 
         foreach($fields as $field)
         {
+            
             // Example:
             // name:string:nullable => ['name', 'string', 'nullable']
             // name:string(15):nullable
