@@ -127,9 +127,9 @@ class MigrationGeneratorCommand extends GeneratorCommand {
             $obj->name = $show_name;
             $obj->icon = 'fa-bars';
             
-            $up = 'DB::table(\'modules\')->insert(array(\'kode\'=> \''.$name.'\', \'body\'=> \''.json_encode($obj).'\'));'.PHP_EOL;
+            $up = 'DB::table(\'eb_modules\')->insert(array(\'kode\'=> \''.$name.'\', \'body\'=> \''.json_encode($obj).'\'));'.PHP_EOL;
             
-            $down = 'DB::table(\'modules\')->where(\'kode\', \'=\', \''.$name.'\')->delete();';
+            $down = 'DB::table(\'eb_modules\')->where(\'kode\', \'=\', \''.$name.'\')->delete();';
         }
         
         return compact('class', 'up', 'down');        
