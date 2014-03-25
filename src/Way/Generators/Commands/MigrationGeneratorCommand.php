@@ -127,12 +127,7 @@ class MigrationGeneratorCommand extends GeneratorCommand {
             $obj->name = $show_name;
             $obj->icon = 'fa-bars';
             
-            $menus = DB::table('settings')->where('id', '=', 1)->first();
-            $new_body = substr($menus->body, 0, -3).',{"title":"'.$show_name.'","routes":"'.$name.'"}]}]';
-            
-            $up = '
-            DB::table(\'modules\')->insert(array(\'kode\'=> \''.$name.'\', \'body\'=> \''.json_encode($obj).'\'));'.PHP_EOL.'
-            DB::table(\'settings\')->where(\'id\', \'=\', 1)->update(array(\'body\' => \''.$new_body.'\'));';
+            $up = 'DB::table(\'modules\')->insert(array(\'kode\'=> \''.$name.'\', \'body\'=> \''.json_encode($obj).'\'));'.PHP_EOL;
             
             $down = 'DB::table(\'modules\')->where(\'kode\', \'=\', \''.$name.'\')->delete();';
         }

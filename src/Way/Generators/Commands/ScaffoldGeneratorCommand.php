@@ -5,7 +5,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Illuminate\Support\Facades\DB;
 use Config;
-use stdClass;
 
 class ScaffoldGeneratorCommand extends ResourceGeneratorCommand {
 
@@ -40,20 +39,6 @@ class ScaffoldGeneratorCommand extends ResourceGeneratorCommand {
         ]);
     }
     
-    protected function insert_modules(){
-        $name = $this->getTableName($this->argument('resource'));
-        $show_name = ucwords(str_replace('_', ' ', snake_case($name)));
-        $obj = new stdClass();
-        $obj->privileges = array('create', 'index', 'edit', 'store', 'show', 'update', 'destroy'); 
-        $obj->name = $show_name;
-        $obj->icon = 'fa-bars';
-        DB::insert('insert into modules (kode, body) values (?, ?)', array($name, json_encode($obj)));
-        
-        $menus = DB::table('settings')->where('id', '=', 1)->first();
-        $new_body = substr($menus->body, 0, -3).',{"title":"'.$show_name.'","routes":"'.$name.'"}]}]';
-        DB::table('settings')->where('id', '=', 1)->update(array('body' => $new_body));
-    }
-
     /**
      * Call model generator if user confirms
      *
