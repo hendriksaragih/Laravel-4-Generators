@@ -10,6 +10,7 @@ use Way\Generators\Commands\ScaffoldGeneratorCommand;
 use Way\Generators\Commands\ScaffoldCustomGeneratorCommand;
 use Way\Generators\Commands\ViewGeneratorCommand;
 use Way\Generators\Commands\RoutesGeneratorCommand;
+use Way\Generators\Commands\ScaffoldRollbackCommand;
 
 class GeneratorsServiceProvider extends ServiceProvider {
 
@@ -45,6 +46,7 @@ class GeneratorsServiceProvider extends ServiceProvider {
             'Resource',
             'Scaffold',
             'Routes',
+            'Rollback',
             'Publisher'] as $command)
         {
             $this->{"register$command"}();
@@ -172,6 +174,16 @@ class GeneratorsServiceProvider extends ServiceProvider {
             return new RoutesGeneratorCommand($generator);
         });
         $this->commands('generate.routes');
+    }
+    
+    public function registerRollback(){
+        $this->app['rollback.scaffold'] = $this->app->share(function($app)
+        {
+            $generator = $this->app->make('Way\Generators\Generator');
+
+            return new ScaffoldRollbackCommand($generator);
+        });
+        $this->commands('rollback.scaffold');
     }
 
     /**
