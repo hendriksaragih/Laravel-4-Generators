@@ -34,7 +34,7 @@ class $NAME$ extends \BaseController {
 
 	    if ($validator->fails())
 	    {
-	        return Redirect::to('$COLLECTION$/create')->withErrors($validator);
+	        return Redirect::to('$COLLECTION$/create')->withErrors($validator)->withInput();
 	    }
 
 	    $MODEL$::create($data);
@@ -81,7 +81,7 @@ class $NAME$ extends \BaseController {
 
         if ($validator->fails())
         {
-            return Redirect::to("$COLLECTION$/$id/edit")->withErrors($validator);
+            return Redirect::to("$COLLECTION$/$id/edit")->withErrors($validator)->withInput();
         }
 
 		$$RESOURCE$->update($data);

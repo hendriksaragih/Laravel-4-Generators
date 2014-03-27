@@ -54,7 +54,7 @@ class RoutesGeneratorCommand extends GeneratorCommand {
      */
     protected function getTemplateData()
     {
-        $tag = '<?php'.PHP_EOL.PHP_EOL;
+        $tag = '<?php';
         $file = $this->getFileGenerationPath();
         $contents = '';
         list($table, $controler) = explode('.', $this->argument('routesName'));

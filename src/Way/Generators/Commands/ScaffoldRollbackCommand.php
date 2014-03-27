@@ -133,7 +133,7 @@ class ScaffoldRollbackCommand extends GeneratorCommand {
     }
 
     protected function getTemplateDataRoutes($path) {
-        $tag = '<?php'.PHP_EOL.PHP_EOL;
+        $tag = '<?php';
         $contents = '';
         $string = "Route::resource('{$this->collection}', '{$this->controllerName}');";
         if (File::isFile($path)){
