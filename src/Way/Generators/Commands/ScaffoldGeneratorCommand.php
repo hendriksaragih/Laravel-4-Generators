@@ -23,12 +23,66 @@ class ScaffoldGeneratorCommand extends ResourceGeneratorCommand {
     protected $description = 'Scaffold a new resource (with boilerplate)';
     
     
-    public function fire(){
-        parent::fire();  
-        $resource = $this->argument('resource');
+    public function fire(){        
+        $resource = $this->argument('resource');        
+        if($this->option('confirms')=='all'){
+            $this->callAll($resource);
+        }else{
+            $this->callModel($resource);
+            $this->callView($resource);
+            $this->callController($resource);
+            $this->callMigration($resource);
+            $this->callSeeder($resource);
+            $this->callMigrate();
+            $this->callAddRoutes($resource);               
+        }        
         $this->migration_modules($resource);
         $this->call('migrate');
     }
+    
+    protected function callAll($resource) {
+        $modelName = $this->getModelName($resource);
+        $collection = $this->getTableName($resource);
+        $controllerName = $this->getControllerName($resource);
+        $migrationName = $this->getMigrationName($resource);
+        $tableName = str_plural($modelName);
+        $routesName = "{$collection}.{$controllerName}";
+        $field = $this->option('fields');
+        
+        $this->call('generate:model', [
+            'modelName' => $modelName,
+            '--templatePath' => Config::get("generators::config.scaffold_model_template_path"),
+            '--fields' => $field
+        ]);
+        
+        foreach(['index', 'show', 'create', 'edit', '_form'] as $viewName)
+        {
+            $viewName = "{$collection}.{$viewName}";
+
+            $this->call('generate:view', [
+                'viewName' => $viewName,
+                '--templatePath' => Config::get("generators::config.scaffold_view_template_path"),
+                '--fields' => $field
+            ]);
+        }                
+
+        $this->call('generate:controller', [
+            'controllerName' => $controllerName,
+            '--templatePath' => Config::get("generators::config.scaffold_controller_template_path")
+        ]);
+        
+        $this->call('generate:migration', [
+            'migrationName' => $migrationName,
+            '--fields' => $field
+        ]);
+                
+        $this->call('generate:seed', compact('tableName'));
+        $this->call('migrate');
+        $this->call('generate:routes', compact('routesName'));
+        
+    }
+    
+    
     
     protected function migration_modules($resource){
         $migrationName = $this->getMigrationName($resource);
@@ -95,6 +149,14 @@ class ScaffoldGeneratorCommand extends ResourceGeneratorCommand {
                 '--templatePath' => Config::get("generators::config.scaffold_controller_template_path")
             ]);
         }
+    }
+    
+    protected function getOptions()
+    {
+        return [
+            ['fields', null, InputOption::VALUE_OPTIONAL, 'Fields for the migration'],
+            ['confirms', null, InputOption::VALUE_OPTIONAL, 'Confirm']
+        ];
     }
 
 }

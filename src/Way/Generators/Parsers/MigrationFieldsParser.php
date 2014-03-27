@@ -14,7 +14,8 @@ class MigrationFieldsParser {
         if ( ! $fields) return [];
         // name:string, age:integer
         // name:string(10,2), age:integer
-        $fields = preg_split('/\s?,/', str_replace(' ', '', $fields));
+        $fields = preg_split('/\s?,\s/', $fields);
+//        $fields = preg_split('/\s?,/', str_replace(' ', '', $fields));
         $parsed = [];
 
         foreach($fields as $field)
