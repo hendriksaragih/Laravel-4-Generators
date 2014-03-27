@@ -87,13 +87,19 @@ class ScaffoldRollbackCommand extends GeneratorCommand {
                     if($this->file_remove($value)){
                         Schema::dropIfExists($this->collection);
                         DB::table('eb_modules')->where('kode', '=', $this->collection)->delete();
+                        DB::table('migrations')->where('migration', '=', str_replace('.php', '', last(explode('/', $value))))->delete();
                     }
                 } else {
                     $pattern = "/$name(\d{14}).php\z/";
                     preg_match($pattern, $value, $results);
-                    if (!empty($results)) $this->file_remove($value);
+                    if (!empty($results)){
+                        $this->file_remove($value);
+                        DB::table('migrations')->where('migration', '=', str_replace('.php', '', last(explode('/', $value))))->delete();
+                    } 
                 }
             }
+            $this->call('dump-autoload');
+            
         }
     }
 
