@@ -37,7 +37,7 @@ class GeneratorsServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-        foreach([
+        foreach(array(
             'Model',
             'View',
             'Controller',
@@ -47,7 +47,7 @@ class GeneratorsServiceProvider extends ServiceProvider {
             'Scaffold',
             'Routes',
             'Rollback',
-            'Publisher'] as $command)
+            'Publisher') as $command)
         {
             $this->{"register$command"}();
         }
